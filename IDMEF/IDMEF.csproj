@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C9BE8461-5E24-4E48-A576-CBB9904A401D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>idmef</RootNamespace>
+    <AssemblyName>IDMEF</AssemblyName>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Message Classes\Assessment Classes\Action.cs" />
+    <Compile Include="Message Classes\Assessment Classes\Confidence.cs" />
+    <Compile Include="Message Classes\Assessment Classes\Impact.cs" />
+    <Compile Include="Message Classes\Core Classes\AdditionalData.cs" />
+    <Compile Include="Message Classes\Alert.cs" />
+    <Compile Include="Other support classes\AlertIdent.cs" />
+    <Compile Include="Message Classes\Core Classes\Analyzer.cs" />
+    <Compile Include="Message Classes\Support Classes\File support classes\Checksum.cs" />
+    <Compile Include="Message Classes\Support Classes\File support classes\FileAccess.cs" />
+    <Compile Include="Message Classes\Support Classes\File support classes\Inode.cs" />
+    <Compile Include="Message Classes\Support Classes\File support classes\Linkage.cs" />
+    <Compile Include="Message Classes\Support Classes\File.cs" />
+    <Compile Include="Message Classes\Support Classes\Node support classes\Address.cs" />
+    <Compile Include="Message Classes\Support Classes\Node.cs" />
+    <Compile Include="Message Classes\Support Classes\Process.cs" />
+    <Compile Include="Message Classes\Support Classes\Reference.cs" />
+    <Compile Include="Message Classes\Support Classes\Service Subclasses\SnmpService.cs" />
+    <Compile Include="Message Classes\Support Classes\Service Subclasses\WebService.cs" />
+    <Compile Include="Message Classes\Support Classes\Service.cs" />
+    <Compile Include="Message Classes\Support Classes\User support classes\UserId.cs" />
+    <Compile Include="Message Classes\Support Classes\User.cs" />
+    <Compile Include="Message Classes\Time Clases\AnalyzerTime.cs" />
+    <Compile Include="Message Classes\Core Classes\Assessment.cs" />
+    <Compile Include="Message Classes\Core Classes\Classification.cs" />
+    <Compile Include="Message Classes\Alert Subclasses\CorrelationAlert.cs" />
+    <Compile Include="Message Classes\Time Clases\CreateTime.cs" />
+    <Compile Include="Message Classes\Time Clases\DetectTime.cs" />
+    <Compile Include="Message Classes\Heartbeat.cs" />
+    <Compile Include="Message Classes\IdmefMessage.cs" />
+    <Compile Include="Message Classes\Alert Subclasses\OverflowAlert.cs" />
+    <Compile Include="Other support classes\Enums.cs" />
+    <Compile Include="Other support classes\NtpStamp.cs" />
+    <Compile Include="Other support classes\PortList.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Message Classes\Core Classes\Source.cs" />
+    <Compile Include="Message Classes\Core Classes\Target.cs" />
+    <Compile Include="Message Classes\Alert Subclasses\ToolAlert.cs" />
+  </ItemGroup>
+</Project>
