@@ -5,15 +5,14 @@ namespace idmef
 {
 	public class WebService
 	{
-		private string url = null;
-		public string cgi = null;
-		public string httpMethod = null;
-		public string[] arg = null;
+		private readonly string url;
+		public string[] arg;
+		public string cgi;
+		public string httpMethod;
 
 		public WebService(string url)
 		{
-			if ((url == null) || (url.Length == 0))
-				throw new ArgumentException("WebService must have an url node.");
+			if (string.IsNullOrEmpty(url)) throw new ArgumentException("WebService must have an url node.");
 			this.url = url;
 		}
 
@@ -34,7 +33,7 @@ namespace idmef
 			subNode.Value = url;
 			webServiceSubNode.AppendChild(subNode);
 			webServiceNode.AppendChild(webServiceSubNode);
-			if ((cgi != null) && (cgi.Length > 0))
+			if (!string.IsNullOrEmpty(cgi))
 			{
 				webServiceNode = document.CreateElement("idmef:cgi", "http://iana.org/idmef");
 				subNode = document.CreateNode(XmlNodeType.Text, "idmef", "cgi", "http://iana.org/idmef");
@@ -42,7 +41,7 @@ namespace idmef
 				webServiceNode.AppendChild(subNode);
 				webServiceNode.AppendChild(webServiceNode);
 			}
-			if ((httpMethod != null) && (httpMethod.Length > 0))
+			if (!string.IsNullOrEmpty(httpMethod))
 			{
 				webServiceNode = document.CreateElement("idmef:http-method", "http://iana.org/idmef");
 				subNode = document.CreateNode(XmlNodeType.Text, "idmef", "http-method", "http://iana.org/idmef");
@@ -50,9 +49,9 @@ namespace idmef
 				webServiceNode.AppendChild(subNode);
 				webServiceNode.AppendChild(webServiceNode);
 			}
-			if ((httpMethod != null) && (httpMethod.Length > 0))
-				foreach (string a in arg)
-					if ((a != null) && (a.Length > 0))
+			if (!string.IsNullOrEmpty(httpMethod))
+				foreach (var a in arg)
+					if (!string.IsNullOrEmpty(a))
 					{
 						webServiceNode = document.CreateElement("idmef:arg", "http://iana.org/idmef");
 						subNode = document.CreateNode(XmlNodeType.Text, "idmef", "arg", "http://iana.org/idmef");

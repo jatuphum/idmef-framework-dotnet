@@ -5,8 +5,8 @@ namespace dev_enum
 {
 	internal class HeartBeater
 	{
-		public int heartBeatInterval = 300;
 		public Analyzer analyzer;
+		public int heartBeatInterval = 300;
 
 		public HeartBeater(int heartBeatInterval, Analyzer analyzer)
 		{
@@ -16,13 +16,7 @@ namespace dev_enum
 
 		public void SendHeartBeat(object state)
 		{
-			IdmefMessage m = new IdmefMessage(new Heartbeat(
-				analyzer,
-				heartBeatInterval,
-				new AnalyzerTime(),
-				null,
-				Guid.NewGuid().ToString()
-			));
+			var m = new IdmefMessage(new Heartbeat(analyzer, heartBeatInterval, new AnalyzerTime(), null, Guid.NewGuid().ToString()));
 			InfoSender.SendHeartbeat(m.ToXml());
 		}
 	}

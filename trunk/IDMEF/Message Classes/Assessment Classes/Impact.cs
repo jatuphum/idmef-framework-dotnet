@@ -4,10 +4,10 @@ namespace idmef
 {
 	public class Impact
 	{
-		public SeverityEnum severity = SeverityEnum.undefined;
-		public CompletionEnum completion = CompletionEnum.undefined;
 		public AssessmentTypeEnum assessmentType = AssessmentTypeEnum.other;
-		public string description = null;
+		public CompletionEnum completion = CompletionEnum.undefined;
+		public string description;
+		public SeverityEnum severity = SeverityEnum.undefined;
 
 		public Impact()
 		{

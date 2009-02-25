@@ -5,15 +5,15 @@ namespace idmef
 {
 	public class Reference
 	{
-		private OriginEnum origin = OriginEnum.unknown;
-		private string meaning = null;
-		private string name = null;
-		private string url = null;
+		private readonly string meaning;
+		private readonly string name;
+		private readonly OriginEnum origin = OriginEnum.unknown;
+		private readonly string url;
 
 		public Reference(string name, string url)
 		{
-			if ((name == null) || (name.Length == 0)) throw new ArgumentException("Reference must have a name node.");
-			if ((url == null) || (url.Length == 0)) throw new ArgumentException("Reference must have an url node.");
+			if (string.IsNullOrEmpty(name)) throw new ArgumentException("Reference must have a name node.");
+			if (string.IsNullOrEmpty(url)) throw new ArgumentException("Reference must have an url node.");
 
 			this.name = name;
 			this.url = url;
@@ -30,9 +30,8 @@ namespace idmef
 			XmlElement referenceNode = document.CreateElement("idmef:Reference", "http://iana.org/idmef");
 
 			referenceNode.SetAttribute("origin", EnumDescription.GetEnumDescription(origin));
-			if ((origin == OriginEnum.userSpecific) || (origin == OriginEnum.vendorSpecific))
-				if ((meaning != null) && (meaning.Length > 0))
-					referenceNode.SetAttribute("meaning", meaning);
+			if (((origin == OriginEnum.userSpecific) || (origin == OriginEnum.vendorSpecific)) && !string.IsNullOrEmpty(meaning))
+				referenceNode.SetAttribute("meaning", meaning);
 
 			XmlElement referenceSubNode = document.CreateElement("idmef:name", "http://iana.org/idmef");
 			XmlNode impactSubNode = document.CreateNode(XmlNodeType.Text, "idmef", "name", "http://iana.org/idmef");

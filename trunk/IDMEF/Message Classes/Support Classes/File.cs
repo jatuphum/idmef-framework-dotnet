@@ -5,39 +5,35 @@ namespace idmef
 {
 	public class File
 	{
-		private string name = null;
-		private string path = null;
-		public DateTime? createTime = null;
-		public DateTime? modifyTime = null;
-		public DateTime? accessTime = null;
-		public Int64? dataSize = null;
-		public Int64? diskSize = null;
-		public FileAccess[] fileAccess = null;
-		public Linkage[] linkage = null;
-		public Inode inode = null;
-		public Checksum[] checksum = null;
-
-		private string ident = "0";
-		private FileCategoryEnum category = FileCategoryEnum.unknown;
+		private readonly FileCategoryEnum category = FileCategoryEnum.unknown;
+		private readonly string ident = "0";
+		private readonly string name;
+		private readonly string path;
+		public DateTime? accessTime;
+		public Checksum[] checksum;
+		public DateTime? createTime;
+		public Int64? dataSize;
+		public Int64? diskSize;
+		public FileAccess[] fileAccess;
+		public string fileType;
 		public FileSystemTypeEnum fstype = FileSystemTypeEnum.unknown;
-		public string fileType = null;
+		public Inode inode;
+		public Linkage[] linkage;
+		public DateTime? modifyTime;
 
 		public File(string name, string path, FileCategoryEnum category)
 		{
-			if ((name == null) || (name.Length == 0))
-				throw new ArgumentException("File must have a name node.");
-			if ((path == null) || (path.Length == 0))
-				throw new ArgumentException("File must have a path node.");
-			if (category == FileCategoryEnum.unknown)
-				throw new ArgumentException("File must have a category attribute.");
+			if (string.IsNullOrEmpty(name)) throw new ArgumentException("File must have a name node.");
+			if (string.IsNullOrEmpty(path)) throw new ArgumentException("File must have a path node.");
+			if (category == FileCategoryEnum.unknown) throw new ArgumentException("File must have a category attribute.");
 			this.name = name;
 			this.path = path;
 			this.category = category;
 		}
 
 		public File(string name, string path, DateTime? createTime, DateTime? modifyTime, DateTime? accessTime,
-					Int64? dataSize, Int64? diskSize, FileAccess[] fileAccess, Linkage[] linkage, Inode inode,
-					Checksum[] checksum, FileCategoryEnum category)
+		            Int64? dataSize, Int64? diskSize, FileAccess[] fileAccess, Linkage[] linkage, Inode inode,
+		            Checksum[] checksum, FileCategoryEnum category)
 			: this(name, path, category)
 		{
 			this.createTime = createTime;
@@ -52,16 +48,13 @@ namespace idmef
 		}
 
 		public File(string name, string path, DateTime? createTime, DateTime? modifyTime, DateTime? accessTime,
-					Int64? dataSize, Int64? diskSize, FileAccess[] fileAccess, Linkage[] linkage, Inode inode,
-					Checksum[] checksum, string ident, FileCategoryEnum category, FileSystemTypeEnum type,
-					string fileType)
+		            Int64? dataSize, Int64? diskSize, FileAccess[] fileAccess, Linkage[] linkage, Inode inode,
+		            Checksum[] checksum, string ident, FileCategoryEnum category, FileSystemTypeEnum type,
+		            string fileType)
 			: this(name, path, createTime, modifyTime, accessTime, dataSize, diskSize, fileAccess, linkage, inode,
-				   checksum, category)
+			       checksum, category)
 		{
-			if ((ident == null) || (ident.Length == 0))
-				this.ident = "0";
-			else
-				this.ident = ident;
+			this.ident = string.IsNullOrEmpty(ident) ? "0" : ident;
 			fstype = type;
 			this.fileType = fileType;
 		}
@@ -73,10 +66,8 @@ namespace idmef
 
 			fileNode.SetAttribute("ident", ident);
 			fileNode.SetAttribute("category", EnumDescription.GetEnumDescription(category));
-			if (fstype != FileSystemTypeEnum.unknown)
-				fileNode.SetAttribute("fstype", EnumDescription.GetEnumDescription(fstype));
-			if ((fileType != null) && (fileType.Length > 0))
-				fileNode.SetAttribute("file-type", fileType);
+			if (fstype != FileSystemTypeEnum.unknown) fileNode.SetAttribute("fstype", EnumDescription.GetEnumDescription(fstype));
+			if (!string.IsNullOrEmpty(fileType)) fileNode.SetAttribute("file-type", fileType);
 
 			XmlElement fileSubNode = document.CreateElement("idmef:name", "http://iana.org/idmef");
 			XmlNode subNode = document.CreateNode(XmlNodeType.Text, "idmef", "name", "http://iana.org/idmef");
@@ -129,15 +120,12 @@ namespace idmef
 				fileNode.AppendChild(fileSubNode);
 			}
 			if ((fileAccess != null) && (fileAccess.Length > 0))
-				foreach (FileAccess fa in fileAccess)
-					if (fa != null) fileNode.AppendChild(fa.ToXml(document));
+				foreach (var fa in fileAccess) if (fa != null) fileNode.AppendChild(fa.ToXml(document));
 			if ((linkage != null) && (linkage.Length > 0))
-				foreach (Linkage lnk in linkage)
-					if (lnk != null) fileNode.AppendChild(lnk.ToXml(document));
+				foreach (var lnk in linkage) if (lnk != null) fileNode.AppendChild(lnk.ToXml(document));
 			if (inode != null) fileNode.AppendChild(inode.ToXml(document));
 			if ((checksum != null) && (checksum.Length > 0))
-				foreach (Checksum chs in checksum)
-					if (chs != null) fileNode.AppendChild(chs.ToXml(document));
+				foreach (var chs in checksum) if (chs != null) fileNode.AppendChild(chs.ToXml(document));
 
 			return fileNode;
 		}

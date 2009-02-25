@@ -4,9 +4,9 @@ namespace idmef
 {
 	public class Assessment
 	{
-		public Impact impact;
 		public Action[] action;
 		public Confidence confidence;
+		public Impact impact;
 
 		public Assessment()
 		{
@@ -19,8 +19,7 @@ namespace idmef
 			this.confidence = confidence;
 		}
 
-		public Assessment(Impact impact, Action action, Confidence confidence)
-			: this(impact, new Action[] {action}, confidence)
+		public Assessment(Impact impact, Action action, Confidence confidence): this(impact, new[] {action}, confidence)
 		{
 		}
 
@@ -30,7 +29,7 @@ namespace idmef
 
 			if (impact != null) assessmentNode.AppendChild(impact.ToXml(document));
 			if ((action != null) && (action.Length > 0))
-				foreach (Action a in action)
+				foreach (var a in action)
 					if (a != null) assessmentNode.AppendChild(a.ToXml(document));
 			if (confidence != null) assessmentNode.AppendChild(confidence.ToXml(document));
 

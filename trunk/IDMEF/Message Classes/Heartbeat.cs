@@ -5,25 +5,23 @@ namespace idmef
 {
 	public class Heartbeat
 	{
-		private string messageId = "0";
-
-		private Analyzer analyzer = null;
-		private CreateTime createTime = new CreateTime();
-		public Int64? heartbeatInterval = null;
-		public AnalyzerTime analyzerTime = null;
-		public AdditionalData[] additionalData = null;
+		private readonly Analyzer analyzer;
+		private readonly CreateTime createTime = new CreateTime();
+		private readonly string messageId = "0";
+		public AdditionalData[] additionalData;
+		public AnalyzerTime analyzerTime;
+		public Int64? heartbeatInterval;
 
 		public Heartbeat(Analyzer analyzer)
 		{
-			if (analyzer == null)
-				throw new ArgumentException("Heartbeat must have an Analyzer node.");
+			if (analyzer == null) throw new ArgumentException("Heartbeat must have an Analyzer node.");
 			this.analyzer = analyzer;
 		}
-		public Heartbeat(Analyzer analyzer, Int64? heartbeatInterval,AnalyzerTime analyzerTime,
-			AdditionalData[] additionalData, string messageId)
-			:this(analyzer)
+
+		public Heartbeat(Analyzer analyzer, Int64? heartbeatInterval, AnalyzerTime analyzerTime, AdditionalData[] additionalData, string messageId)
+			: this(analyzer)
 		{
-			this.messageId = ((messageId == null) || (messageId.Length == 0)) ? "0" : messageId;
+			this.messageId = string.IsNullOrEmpty(messageId) ? "0" : messageId;
 
 			this.heartbeatInterval = heartbeatInterval;
 			this.analyzerTime = analyzerTime;
@@ -40,10 +38,8 @@ namespace idmef
 			alertNode.AppendChild(createTime.ToXml(document));
 			if (heartbeatInterval != null)
 			{
-				XmlElement subNode = document
-					.CreateElement("idmef:HeartbeatInterval","http://iana.org/idmef");
-				XmlNode subNodeText = document
-					.CreateNode(XmlNodeType.Text, "idmef", "HeartbeatInterval", "http://iana.org/idmef");
+				XmlElement subNode = document.CreateElement("idmef:HeartbeatInterval", "http://iana.org/idmef");
+				XmlNode subNodeText = document.CreateNode(XmlNodeType.Text, "idmef", "HeartbeatInterval", "http://iana.org/idmef");
 
 				subNodeText.Value = heartbeatInterval.ToString();
 
@@ -52,7 +48,7 @@ namespace idmef
 			}
 			if (analyzerTime != null) alertNode.AppendChild(analyzerTime.ToXml(document));
 			if (additionalData != null)
-				foreach (AdditionalData ad in additionalData)
+				foreach (var ad in additionalData)
 					if (ad != null) alertNode.AppendChild(ad.ToXml(document));
 
 			return alertNode;

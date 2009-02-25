@@ -5,20 +5,18 @@ namespace idmef
 {
 	public class Checksum
 	{
-		private string value = null;
-		public string key = null;
-
-		private ChecksumAlgorithmEnum algorithm;
+		private readonly ChecksumAlgorithmEnum algorithm;
+		private readonly string value;
+		public string key;
 
 		public Checksum(string value, ChecksumAlgorithmEnum algorithm)
 		{
-			if((value == null)||(value.Length==0))
-				throw new ArgumentException("Checksum must have a value node.");
+			if (string.IsNullOrEmpty(value)) throw new ArgumentException("Checksum must have a value node.");
 			this.value = value;
 			this.algorithm = algorithm;
 		}
-		public Checksum(string value, string key, ChecksumAlgorithmEnum algorithm)
-			:this(value, algorithm)
+
+		public Checksum(string value, string key, ChecksumAlgorithmEnum algorithm): this(value, algorithm)
 		{
 			this.key = key;
 		}
@@ -34,7 +32,7 @@ namespace idmef
 			subNode.Value = value;
 			checksumSubNode.AppendChild(subNode);
 			checksumNode.AppendChild(checksumSubNode);
-			if ((key != null) && (key.Length>0))
+			if (!string.IsNullOrEmpty(key))
 			{
 				checksumSubNode = document.CreateElement("idmef:key", "http://iana.org/idmef");
 				subNode = document.CreateNode(XmlNodeType.Text, "idmef", "key", "http://iana.org/idmef");
@@ -45,6 +43,5 @@ namespace idmef
 
 			return checksumNode;
 		}
-
 	}
 }
