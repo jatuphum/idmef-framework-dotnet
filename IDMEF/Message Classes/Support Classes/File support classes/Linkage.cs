@@ -5,22 +5,18 @@ namespace idmef
 {
 	public class Linkage
 	{
-		private LinkageCategoryEnum category = LinkageCategoryEnum.unknown;
+		private readonly LinkageCategoryEnum category = LinkageCategoryEnum.unknown;
+		private readonly File file;
 
-		private string name = null;
-		private string path = null;
-		private File file = null;
+		private readonly string name;
+		private readonly string path;
 
 		public Linkage(string name, string path, File file, LinkageCategoryEnum category)
 		{
-			if ((name == null) || (name.Length == 0))
-				throw new ArgumentException("Linkage must have a name node.");
-			if ((path == null) || (path.Length == 0))
-				throw new ArgumentException("Linkage must have a path node.");
-			if (file == null)
-				throw new ArgumentException("Linkage must have a File node.");
-			if (category == LinkageCategoryEnum.unknown)
-				throw new ArgumentException("Linkage must have a category attribute.");
+			if (string.IsNullOrEmpty(name)) throw new ArgumentException("Linkage must have a name node.");
+			if (string.IsNullOrEmpty(path)) throw new ArgumentException("Linkage must have a path node.");
+			if (file == null) throw new ArgumentException("Linkage must have a File node.");
+			if (category == LinkageCategoryEnum.unknown) throw new ArgumentException("Linkage must have a category attribute.");
 			this.name = name;
 			this.path = path;
 			this.file = file;

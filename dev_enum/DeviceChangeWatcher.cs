@@ -11,12 +11,14 @@ namespace dev_enum
 	internal class DeviceChangeWatcher
 	{
 		public static bool isActive = true;
+		private List<Win32_PNPEntity_Wrap> deviceList;
+		private Timer heartBeatingTimer;
 
 		#region IDMEF classes
 
-		private static Node localhost = new Node(Environment.MachineName);
+		private static readonly Node localhost = new Node(Environment.MachineName);
 
-		private Analyzer analyzer = new Analyzer(
+		private readonly Analyzer analyzer = new Analyzer(
 			localhost,
 			new idmef.Process(
 				Process.GetCurrentProcess().MainModule.ModuleName,
@@ -25,37 +27,40 @@ namespace dev_enum
 				null,
 				null,
 				Guid.NewGuid().ToString()
-			),
+				),
 			null,
 			Guid.NewGuid().ToString(),
 			"Device Enumerator",
 			"13xforever",
 			"Windows service (using .NET Framework)",
-			Process.GetCurrentProcess().MainModule.FileVersionInfo.FileVersion.ToString(),
+			Process.GetCurrentProcess().MainModule.FileVersionInfo.FileVersion,
 			"service/information",
 			Environment.OSVersion.Platform.ToString(),
 			Environment.OSVersion.VersionString
-		);
+			);
 
-		private Source[] source = new Source[]{new Source(
-			localhost,
-			new User(
-				new UserId(
-					Environment.UserName,
-					null,
-					Guid.NewGuid().ToString(),
-					UserIdTypeEnum.currentUser,
-					null
-				),
-				Guid.NewGuid().ToString(),
-				UserCategoryEnum.osDevice
-			),
-			null,
-			null,
-			Guid.NewGuid().ToString(),
-			UynEnum.unknown,
-			null
-		)};
+		private readonly Source[] source = new[]
+		                                   	{
+		                                   		new Source(
+		                                   			localhost,
+		                                   			new User(
+		                                   				new UserId(
+		                                   					Environment.UserName,
+		                                   					null,
+		                                   					Guid.NewGuid().ToString(),
+		                                   					UserIdTypeEnum.currentUser,
+		                                   					null
+		                                   					),
+		                                   				Guid.NewGuid().ToString(),
+		                                   				UserCategoryEnum.osDevice
+		                                   				),
+		                                   			null,
+		                                   			null,
+		                                   			Guid.NewGuid().ToString(),
+		                                   			UynEnum.unknown,
+		                                   			null
+		                                   			)
+		                                   	};
 
 		#endregion
 
@@ -67,25 +72,26 @@ namespace dev_enum
 			//load previous state
 			deviceList = BuildDeviceList();
 
-			HeartBeater heartBeater = new HeartBeater(5 * 60, analyzer);
-			TimerCallback timerCallback = new TimerCallback(heartBeater.SendHeartBeat);
-			heartBeatingTimer = new Timer(timerCallback, null, 0, heartBeater.heartBeatInterval * 1000);
+			var heartBeater = new HeartBeater(5*60, analyzer);
+			TimerCallback timerCallback = heartBeater.SendHeartBeat;
+			heartBeatingTimer = new Timer(timerCallback, null, 0, heartBeater.heartBeatInterval*1000);
 
 			#endregion
 
 			#region setting up event watcher to receive device change notifications
 
-			ManagementEventWatcher eventWatcher = new ManagementEventWatcher();
-			//eventWatcher.Query = new WqlEventQuery("Win32_DeviceChangeEvent");
-			// vista bug: http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=835398&SiteID=1
-			eventWatcher.Query = new WqlEventQuery("Win32_SystemConfigurationChangeEvent");
-			eventWatcher.EventArrived += new EventArrivedEventHandler(DeviceChangeEventHandler);
+			var eventWatcher = new ManagementEventWatcher
+			                   	{
+			                   		// vista bug: http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=835398&SiteID=1
+			                   		//Query = new WqlEventQuery("Win32_DeviceChangeEvent");
+			                   		Query = new WqlEventQuery("Win32_SystemConfigurationChangeEvent")
+			                   	};
+			eventWatcher.EventArrived += DeviceChangeEventHandler;
 			eventWatcher.Start();
 
 			#endregion
 
 			while (isActive) Thread.Sleep(10000);
-
 
 			heartBeatingTimer.Dispose();
 			eventWatcher.Stop();
@@ -104,16 +110,15 @@ namespace dev_enum
 
 		private static List<Win32_PNPEntity_Wrap> BuildDeviceList()
 		{
-			ManagementObjectSearcher mos = new ManagementObjectSearcher("select * from Win32_PnPEntity");
+			var mos = new ManagementObjectSearcher("select * from Win32_PnPEntity");
 			ManagementObjectCollection moc = mos.Get();
-			List<Win32_PNPEntity_Wrap> state = new List<Win32_PNPEntity_Wrap>();
+			var state = new List<Win32_PNPEntity_Wrap>();
 			foreach (ManagementObject mo in moc) state.Add(new Win32_PNPEntity_Wrap(mo));
 			state.Sort();
 			return state;
 		}
 
-		private void LookForDifferences(List<Win32_PNPEntity_Wrap> newList,
-											   List<Win32_PNPEntity_Wrap> oldList)
+		private void LookForDifferences(IList<Win32_PNPEntity_Wrap> newList, IList<Win32_PNPEntity_Wrap> oldList)
 		{
 			int newDeviceIndex = 0;
 			int oldDeviceIndex = 0;
@@ -123,8 +128,7 @@ namespace dev_enum
 				int relation = newList[newDeviceIndex].CompareTo(oldList[oldDeviceIndex]);
 				if (relation == 0)
 				{
-					if (!newList[newDeviceIndex].Equals(oldList[oldDeviceIndex]))
-						SendDeviceChangedInfo(newList[newDeviceIndex]);
+					if (!newList[newDeviceIndex].Equals(oldList[oldDeviceIndex])) SendDeviceChangedInfo(newList[newDeviceIndex]);
 					newDeviceIndex++;
 					oldDeviceIndex++;
 				}
@@ -145,77 +149,73 @@ namespace dev_enum
 
 		private void SendDeviceAddedInfo(Win32_PNPEntity_Wrap device)
 		{
-			IdmefMessage m = new IdmefMessage(new Alert(
-				analyzer,
-				new Classification(
-					(Reference)null,
-					Guid.NewGuid().ToString(),
-					"Hardware connection"
-				),
-				new DetectTime(),
-				new AnalyzerTime(),
-				source,
-				null,
-				null,
-				new AdditionalData[]{new AdditionalData(
-					"Device information",
-					device.ToXml()
-				)},
-				Guid.NewGuid().ToString()
-			));
+			var m = new IdmefMessage(new Alert(
+			                         	analyzer,
+			                         	new Classification((Reference)null, Guid.NewGuid().ToString(), "Hardware connection"),
+			                         	new DetectTime(),
+			                         	new AnalyzerTime(),
+			                         	source,
+			                         	null,
+			                         	null,
+			                         	new[] {new AdditionalData("Device information", device.ToXml())},
+			                         	Guid.NewGuid().ToString()
+			                         	));
 			m.alert[0].source[0].user.userId[0].name = (new Microsoft.VisualBasic.ApplicationServices.User()).Name;
 			InfoSender.SendAdded(m.ToXml());
 		}
 
 		private void SendDeviceRemovedInfo(Win32_PNPEntity_Wrap device)
 		{
-			IdmefMessage m = new IdmefMessage(new Alert(
-				analyzer,
-				new Classification(
-					(Reference)null,
-					Guid.NewGuid().ToString(),
-					"Hardware disconnection"
-				),
-				new DetectTime(),
-				new AnalyzerTime(),
-				source,
-				null,
-				null,
-				new AdditionalData[]{new AdditionalData(
-					"Device information",
-					device.ToXml()
-				)},
-				Guid.NewGuid().ToString()
-			));
+			var m = new IdmefMessage(new Alert(
+			                         	analyzer,
+			                         	new Classification(
+			                         		(Reference)null,
+			                         		Guid.NewGuid().ToString(),
+			                         		"Hardware disconnection"
+			                         		),
+			                         	new DetectTime(),
+			                         	new AnalyzerTime(),
+			                         	source,
+			                         	null,
+			                         	null,
+			                         	new[]
+			                         		{
+			                         			new AdditionalData(
+			                         				"Device information",
+			                         				device.ToXml()
+			                         				)
+			                         		},
+			                         	Guid.NewGuid().ToString()
+			                         	));
 			m.alert[0].source[0].user.userId[0].name = (new Microsoft.VisualBasic.ApplicationServices.User()).Name;
 			InfoSender.SendRemoved(m.ToXml());
 		}
 
 		private void SendDeviceChangedInfo(Win32_PNPEntity_Wrap device)
 		{
-			IdmefMessage m = new IdmefMessage(new Alert(
-				analyzer,
-				new Classification(
-					(Reference)null,
-					Guid.NewGuid().ToString(),
-					"Hardware configuration change"
-				),
-				new DetectTime(),
-				new AnalyzerTime(),
-				source,
-				null,
-				null,
-				new AdditionalData[]{new AdditionalData(
-					"Device information",
-					device.ToXml()
-				)},
-				Guid.NewGuid().ToString()
-			));
+			var m = new IdmefMessage(new Alert(
+			                         	analyzer,
+			                         	new Classification(
+			                         		(Reference)null,
+			                         		Guid.NewGuid().ToString(),
+			                         		"Hardware configuration change"
+			                         		),
+			                         	new DetectTime(),
+			                         	new AnalyzerTime(),
+			                         	source,
+			                         	null,
+			                         	null,
+			                         	new[]
+			                         		{
+			                         			new AdditionalData(
+			                         				"Device information",
+			                         				device.ToXml()
+			                         				)
+			                         		},
+			                         	Guid.NewGuid().ToString()
+			                         	));
 			m.alert[0].source[0].user.userId[0].name = (new Microsoft.VisualBasic.ApplicationServices.User()).Name;
 			InfoSender.SendModified(m.ToXml());
 		}
-
-		private List<Win32_PNPEntity_Wrap> deviceList;
-		private Timer heartBeatingTimer;
 	}
 }

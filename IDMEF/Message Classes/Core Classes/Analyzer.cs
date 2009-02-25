@@ -4,26 +4,25 @@ namespace idmef
 {
 	public class Analyzer
 	{
-		private string analyzerId = null;
-		public string name = null;
-		public string manufacturer = null;
-		public string model = null;
-		public string version = null;
-		public string clazz = null;
-		public string osType = null;
-		public string osVersion = null;
+		private readonly string analyzerId;
+		public Analyzer analyzer;
+		public string clazz;
+		public string manufacturer;
+		public string model;
+		public string name;
+		public Node node;
+		public string osType;
+		public string osVersion;
 
-		public Node node = null;
-		public Process process = null;
-		public Analyzer analyzer = null;
+		public Process process;
+		public string version;
 
 		public Analyzer(string analyzerId)
 		{
 			this.analyzerId = analyzerId;
 		}
 
-		public Analyzer(Node node, Process process, Analyzer analyzer, string analyzerId)
-			: this(analyzerId)
+		public Analyzer(Node node, Process process, Analyzer analyzer, string analyzerId): this(analyzerId)
 		{
 			this.node = node;
 			this.process = process;
@@ -31,8 +30,8 @@ namespace idmef
 		}
 
 		public Analyzer(Node node, Process process, Analyzer analyzer,
-						string analyzerId, string name, string manufacturer, string model, string version,
-						string clazz, string osType, string osVersion)
+		                string analyzerId, string name, string manufacturer, string model, string version,
+		                string clazz, string osType, string osVersion)
 			: this(node, process, analyzer, analyzerId)
 		{
 			this.name = name;
@@ -48,20 +47,13 @@ namespace idmef
 		{
 			XmlElement analyzerNode = document.CreateElement("idmef:Analyzer", "http://iana.org/idmef");
 
-			if ((analyzerId != null) && (analyzerId.Length>0))
-				analyzerNode.SetAttribute("analyzerid", analyzerId);
-			if ((name != null) && (name.Length > 0))
-				analyzerNode.SetAttribute("name", name);
-			if ((manufacturer != null) && (manufacturer.Length > 0))
-				analyzerNode.SetAttribute("manufacturer", manufacturer);
-			if ((model != null) && (model.Length > 0))
-				analyzerNode.SetAttribute("model", model);
-			if ((clazz != null) && (clazz.Length > 0))
-				analyzerNode.SetAttribute("class", clazz);
-			if ((osType != null) && (osType.Length > 0))
-				analyzerNode.SetAttribute("ostype", osType);
-			if ((osVersion != null) && (osVersion.Length > 0))
-				analyzerNode.SetAttribute("osversion", osVersion);
+			if (!string.IsNullOrEmpty(analyzerId)) analyzerNode.SetAttribute("analyzerid", analyzerId);
+			if (!string.IsNullOrEmpty(name)) analyzerNode.SetAttribute("name", name);
+			if (!string.IsNullOrEmpty(manufacturer)) analyzerNode.SetAttribute("manufacturer", manufacturer);
+			if (!string.IsNullOrEmpty(model)) analyzerNode.SetAttribute("model", model);
+			if (!string.IsNullOrEmpty(clazz)) analyzerNode.SetAttribute("class", clazz);
+			if (!string.IsNullOrEmpty(osType)) analyzerNode.SetAttribute("ostype", osType);
+			if (!string.IsNullOrEmpty(osVersion)) analyzerNode.SetAttribute("osversion", osVersion);
 
 			if (node != null) analyzerNode.AppendChild(node.ToXml(document));
 			if (process != null) analyzerNode.AppendChild(process.ToXml(document));

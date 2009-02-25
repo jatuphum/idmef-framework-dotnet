@@ -5,18 +5,16 @@ namespace idmef
 {
 	public class AlertIdent
 	{
-		private string alertIdent = null;
-		public string analyzerId = null;
+		private readonly string alertIdent;
+		public string analyzerId;
 
 		public AlertIdent(string value)
 		{
-			if ((value == null) || (value.Length == 0))
-				throw new ArgumentException("AlertIdent mustn't be empty.");
+			if (string.IsNullOrEmpty(value)) throw new ArgumentException("AlertIdent mustn't be empty.");
 			alertIdent = value;
 		}
 
-		public AlertIdent(string value, string analyzerId)
-			: this(value)
+		public AlertIdent(string value, string analyzerId): this(value)
 		{
 			this.analyzerId = analyzerId;
 		}
@@ -24,11 +22,9 @@ namespace idmef
 		public XmlElement ToXml(XmlDocument document)
 		{
 			XmlElement alertIdentNode = document.CreateElement("idmef:alertident", "http://iana.org/idmef");
-			if ((analyzerId != null) && (analyzerId.Length > 0))
-				alertIdentNode.SetAttribute("analyzerid", analyzerId);
+			if (!string.IsNullOrEmpty(analyzerId)) alertIdentNode.SetAttribute("analyzerid", analyzerId);
 
-			XmlNode subNodeText = document
-				.CreateNode(XmlNodeType.Text, "idmef", "alertident", "http://iana.org/idmef");
+			XmlNode subNodeText = document.CreateNode(XmlNodeType.Text, "idmef", "alertident", "http://iana.org/idmef");
 			subNodeText.Value = alertIdent;
 			alertIdentNode.AppendChild(subNodeText);
 

@@ -5,7 +5,8 @@ namespace idmef
 {
 	public class NtpStamp
 	{
-		private UInt32 integer, fraction;
+		private readonly UInt32 fraction;
+		private readonly UInt32 integer;
 
 		public NtpStamp(): this(DateTime.Now)
 		{
@@ -15,14 +16,14 @@ namespace idmef
 		{
 			long time = dateTime.ToUniversalTime().Ticks;
 			long root = DateTime.SpecifyKind(new DateTime(1900, 1, 1), DateTimeKind.Utc).Ticks;
-			long tps = TimeSpan.TicksPerSecond;
+			const long tps = TimeSpan.TicksPerSecond;
 
 			long stamp = time - root;
 			if (root > time) stamp = -stamp;
-			
+
 			integer = (UInt32)(stamp/tps);
 			stamp %= tps;
-			fraction = (UInt32)((decimal)stamp/(decimal)tps*0x100000000L);
+			fraction = (UInt32)(stamp/(decimal)tps*0x100000000L);
 		}
 
 		public static NtpStamp Convert(DateTime dateTime)
@@ -38,8 +39,7 @@ namespace idmef
 		public XmlElement ToXml(XmlDocument document)
 		{
 			XmlElement ntpstampNode = document.CreateElement("idmef:ntpstamp", "http://iana.org/idmef");
-			XmlNode ntpstampSubNode = document
-				.CreateNode(XmlNodeType.Text, "idmef", "ntpstamp", "http://iana.org/idmef");
+			XmlNode ntpstampSubNode = document.CreateNode(XmlNodeType.Text, "idmef", "ntpstamp", "http://iana.org/idmef");
 			ntpstampSubNode.Value = ToString();
 			ntpstampNode.AppendChild(ntpstampSubNode);
 

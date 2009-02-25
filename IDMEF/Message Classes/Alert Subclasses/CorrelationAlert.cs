@@ -5,13 +5,12 @@ namespace idmef
 {
 	public class CorrelationAlert
 	{
-		private string name = null;
-		private AlertIdent[] alertIdent = null;
+		private readonly AlertIdent[] alertIdent;
+		private readonly string name;
 
 		public CorrelationAlert(string name, AlertIdent[] alertIdent)
 		{
-			if ((name == null) || (name.Length == 0))
-				throw new ArgumentException("CorrelationAlert must have a name node.");
+			if (string.IsNullOrEmpty(name)) throw new ArgumentException("CorrelationAlert must have a name node.");
 			if ((alertIdent == null) || (alertIdent.Length == 0))
 				throw new ArgumentException("CorrelationAlert must have at least one alertident node.");
 			this.name = name;
@@ -28,8 +27,7 @@ namespace idmef
 
 			subNode.AppendChild(subNodeText);
 			alertNode.AppendChild(subNode);
-			foreach (AlertIdent ai in alertIdent)
-				if (ai != null) alertNode.AppendChild(ai.ToXml(document));
+			foreach (var ai in alertIdent) if (ai != null) alertNode.AppendChild(ai.ToXml(document));
 
 			return alertNode;
 		}

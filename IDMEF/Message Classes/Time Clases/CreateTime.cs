@@ -5,8 +5,8 @@ namespace idmef
 {
 	internal class CreateTime
 	{
+		private readonly NtpStamp ntpStamp;
 		private DateTime createTime;
-		private NtpStamp ntpStamp;
 
 		public CreateTime()
 		{
@@ -19,8 +19,7 @@ namespace idmef
 			XmlElement createtTimeNode = document.CreateElement("idmef:CreateTime", "http://iana.org/idmef");
 			createtTimeNode.SetAttribute("ntpstamp", ntpStamp.ToString());
 
-			XmlNode subNodeText = document
-				.CreateNode(XmlNodeType.Text, "idmef", "CreateTime", "http://iana.org/idmef");
+			XmlNode subNodeText = document.CreateNode(XmlNodeType.Text, "idmef", "CreateTime", "http://iana.org/idmef");
 			subNodeText.Value = createTime.ToString("o");
 			createtTimeNode.AppendChild(subNodeText);
 

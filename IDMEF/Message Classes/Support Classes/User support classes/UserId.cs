@@ -5,12 +5,12 @@ namespace idmef
 {
 	public class UserId
 	{
-		private string ident = "0";
-		public UserIdTypeEnum type = UserIdTypeEnum.originalUser;
-		public string tty = null;
+		private readonly string ident = "0";
 
-		public string name = null;
-		public Int64? number = null;
+		public string name;
+		public Int64? number;
+		public string tty;
+		public UserIdTypeEnum type = UserIdTypeEnum.originalUser;
 
 		public UserId(string name, Int64? number)
 		{
@@ -21,10 +21,7 @@ namespace idmef
 		public UserId(string name, Int64? number, string ident, UserIdTypeEnum type, string tty)
 			: this(name, number)
 		{
-			if ((ident == null) || (ident.Length == 0))
-				this.ident = "0";
-			else
-				this.ident = ident;
+			this.ident = string.IsNullOrEmpty(ident) ? "0" : ident;
 			this.type = type;
 			this.tty = tty;
 		}
@@ -35,9 +32,9 @@ namespace idmef
 
 			addressNode.SetAttribute("ident", ident);
 			addressNode.SetAttribute("type", EnumDescription.GetEnumDescription(type));
-			if ((tty != null) && (tty.Length > 0)) addressNode.SetAttribute("tty", tty);
+			if (!string.IsNullOrEmpty(tty)) addressNode.SetAttribute("tty", tty);
 
-			if ((name != null) && (name.Length > 0))
+			if (!string.IsNullOrEmpty(name))
 			{
 				XmlElement addressSubNode = document.CreateElement("idmef:name", "http://iana.org/idmef");
 				XmlNode subNode = document.CreateNode(XmlNodeType.Text, "idmef", "name", "http://iana.org/idmef");

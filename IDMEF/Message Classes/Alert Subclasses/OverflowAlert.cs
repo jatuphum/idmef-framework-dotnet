@@ -5,14 +5,13 @@ namespace idmef
 {
 	public class OverflowAlert
 	{
-		private string program = null;
-		public Int64? size = null;
-		public byte[] buffer = null;
+		private readonly string program;
+		public byte[] buffer;
+		public Int64? size;
 
 		public OverflowAlert(string program)
 		{
-			if ((program == null) || (program.Length == 0))
-				throw new ArgumentException("OverflowAlert must have a program node.");
+			if (string.IsNullOrEmpty(program)) throw new ArgumentException("OverflowAlert must have a program node.");
 			this.program = program;
 		}
 
@@ -26,8 +25,7 @@ namespace idmef
 
 		public XmlElement ToXml(XmlDocument document)
 		{
-			if ((program == null) || (program.Length == 0))
-				throw new InvalidOperationException("There must be a program node.");
+			if (string.IsNullOrEmpty(program)) throw new InvalidOperationException("There must be a program node.");
 
 			XmlElement alertNode = document.CreateElement("idmef:OverflowAlert", "http://iana.org/idmef");
 

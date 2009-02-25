@@ -4,7 +4,7 @@ namespace idmef
 {
 	public class PortList
 	{
-		private string portList = null;
+		private readonly string portList;
 
 		public PortList(string portList)
 		{
@@ -19,8 +19,7 @@ namespace idmef
 		public XmlElement ToXml(XmlDocument document)
 		{
 			XmlElement portlistNode = document.CreateElement("idmef:portlist", "http://iana.org/idmef");
-			XmlNode portlistSubNode = document
-				.CreateNode(XmlNodeType.Text, "idmef", "portlist", "http://iana.org/idmef");
+			XmlNode portlistSubNode = document.CreateNode(XmlNodeType.Text, "idmef", "portlist", "http://iana.org/idmef");
 			portlistSubNode.Value = ToString();
 			portlistNode.AppendChild(portlistSubNode);
 

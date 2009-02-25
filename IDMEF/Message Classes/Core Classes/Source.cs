@@ -4,23 +4,22 @@ namespace idmef
 {
 	public class Source
 	{
-		private string ident = "0";
-		public UynEnum spoofed = UynEnum.unknown;
-		public string i_face = null;
+		private readonly string ident = "0";
+		public string i_face;
 
 		public Node node;
-		public User user;
 		public Process process;
 		public Service service;
+		public UynEnum spoofed = UynEnum.unknown;
+		public User user;
 
 		public Source()
 		{
 		}
 
-		public Source(Node node, User user, Process process, Service service,
-					  string ident, UynEnum spoofed, string i_face)
+		public Source(Node node, User user, Process process, Service service, string ident, UynEnum spoofed, string i_face)
 		{
-			this.ident = ((ident == null) || (ident.Length == 0)) ? "0" : ident;
+			this.ident = string.IsNullOrEmpty(ident) ? "0" : ident;
 			this.spoofed = spoofed;
 			this.i_face = i_face;
 

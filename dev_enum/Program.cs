@@ -6,10 +6,7 @@ namespace dev_enum
 	{
 		private static void Main()
 		{
-			ServiceBase[] ServicesToRun;
-
-			ServicesToRun = new ServiceBase[] {new device_enumerator()};
-
+			var ServicesToRun = new ServiceBase[] {new device_enumerator()};
 			ServiceBase.Run(ServicesToRun);
 		}
 	}

@@ -5,21 +5,21 @@ namespace idmef
 {
 	public class SnmpService
 	{
-		public string oid = null;
-		public Int64? messageProcessingModel = null;
-		public Int64? securityModel = null;
-		public string securityName = null;
-		public Int64? securityLevel = null;
-		public string contextName = null;
-		public string contextEngineID = null;
-		public string command = null;
+		public string command;
+		public string contextEngineID;
+		public string contextName;
+		public Int64? messageProcessingModel;
+		public string oid;
+		public Int64? securityLevel;
+		public Int64? securityModel;
+		public string securityName;
 
 		public SnmpService()
 		{
 		}
 
 		public SnmpService(string oid, Int64? messageProcessingModel, Int64? securityModel, string securityName,
-						   Int64? securityLevel, string contextName, string contextEngineID, string command)
+		                   Int64? securityLevel, string contextName, string contextEngineID, string command)
 		{
 			this.oid = oid;
 			this.messageProcessingModel = messageProcessingModel;
@@ -35,7 +35,7 @@ namespace idmef
 		{
 			XmlElement snmpServiceNode = document.CreateElement("idmef:SNMPService", "http://iana.org/idmef");
 
-			if ((oid != null) && (oid.Length > 0))
+			if (!string.IsNullOrEmpty(oid))
 			{
 				XmlElement snmpServiceSubNode = document.CreateElement("idmef:oid", "http://iana.org/idmef");
 				XmlNode subNode = document.CreateNode(XmlNodeType.Text, "idmef", "oid", "http://iana.org/idmef");
@@ -59,7 +59,7 @@ namespace idmef
 				snmpServiceSubNode.AppendChild(subNode);
 				snmpServiceNode.AppendChild(snmpServiceSubNode);
 			}
-			if ((securityName != null) && (securityName.Length > 0))
+			if (!string.IsNullOrEmpty(securityName))
 			{
 				XmlElement snmpServiceSubNode = document.CreateElement("idmef:securityName", "http://iana.org/idmef");
 				XmlNode subNode = document.CreateNode(XmlNodeType.Text, "idmef", "securityName", "http://iana.org/idmef");
@@ -76,7 +76,7 @@ namespace idmef
 				snmpServiceNode.AppendChild(snmpServiceSubNode);
 			}
 
-			if ((contextName != null) && (contextName.Length > 0))
+			if (!string.IsNullOrEmpty(contextName))
 			{
 				XmlElement snmpServiceSubNode = document.CreateElement("idmef:contextName", "http://iana.org/idmef");
 				XmlNode subNode = document.CreateNode(XmlNodeType.Text, "idmef", "contextName", "http://iana.org/idmef");
@@ -84,7 +84,7 @@ namespace idmef
 				snmpServiceSubNode.AppendChild(subNode);
 				snmpServiceNode.AppendChild(snmpServiceSubNode);
 			}
-			if ((contextEngineID != null) && (contextEngineID.Length > 0))
+			if (!string.IsNullOrEmpty(contextEngineID))
 			{
 				XmlElement snmpServiceSubNode = document.CreateElement("idmef:contextEngineID", "http://iana.org/idmef");
 				XmlNode subNode = document.CreateNode(XmlNodeType.Text, "idmef", "contextEngineID", "http://iana.org/idmef");
@@ -92,7 +92,7 @@ namespace idmef
 				snmpServiceSubNode.AppendChild(subNode);
 				snmpServiceNode.AppendChild(snmpServiceSubNode);
 			}
-			if ((command != null) && (command.Length > 0))
+			if (!string.IsNullOrEmpty(command))
 			{
 				XmlElement snmpServiceSubNode = document.CreateElement("idmef:command", "http://iana.org/idmef");
 				XmlNode subNode = document.CreateNode(XmlNodeType.Text, "idmef", "command", "http://iana.org/idmef");

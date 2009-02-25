@@ -5,22 +5,20 @@ namespace idmef
 {
 	public class FileAccess
 	{
-		private UserId userId = null;
-		private Permission[] permission = null;
+		private readonly Permission[] permission;
+		private readonly UserId userId;
 
 		public FileAccess(UserId userId, Permission permission)
 		{
-			if (userId == null)
-				throw new ArgumentException("FileAccess must have a UserId node.");
+			if (userId == null) throw new ArgumentException("FileAccess must have a UserId node.");
 			this.userId = userId;
-			this.permission = new Permission[] { permission };
+			this.permission = new[] {permission};
 		}
+
 		public FileAccess(UserId userId, Permission[] permission)
 		{
-			if (userId == null)
-				throw new ArgumentException("FileAccess must have a UserId node.");
-			if ((permission == null) || (permission.Length == 0))
-				throw new ArgumentException("FileAccess must have at least one Permission node.");
+			if (userId == null) throw new ArgumentException("FileAccess must have a UserId node.");
+			if ((permission == null) || (permission.Length == 0)) throw new ArgumentException("FileAccess must have at least one Permission node.");
 			this.userId = userId;
 			this.permission = permission;
 		}
@@ -30,12 +28,11 @@ namespace idmef
 			XmlElement fileAccessNode = document.CreateElement("idmef:FileAccess", "http://iana.org/idmef");
 
 			if (!((userId.type == UserIdTypeEnum.userPrivs) ||
-				(userId.type == UserIdTypeEnum.groupPrivs) ||
-				(userId.type == UserIdTypeEnum.otherPrivs)))
-				throw new InvalidOperationException(string
-					.Format("FileAcces node can't hold UserId of type {0}!", userId));
+			      (userId.type == UserIdTypeEnum.groupPrivs) ||
+			      (userId.type == UserIdTypeEnum.otherPrivs)))
+				throw new InvalidOperationException(string.Format("FileAcces node can't hold UserId of type {0}!", userId));
 			fileAccessNode.AppendChild(userId.ToXml(document));
-			foreach (Permission p in permission)
+			foreach (var p in permission)
 			{
 				XmlElement fileAccessSubNode = document.CreateElement("idmef:Permission", "http://iana.org/idmef");
 				XmlNode subNode = document.CreateNode(XmlNodeType.Text, "idmef", "Permission", "http://iana.org/idmef");
